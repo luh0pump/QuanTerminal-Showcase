@@ -1,0 +1,16 @@
+# .NET
+bin/
+obj/
+*.user
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+# Data — never commit market data or research artifacts
+*.parquet
+*.duckdb
+data/
+warehouse/
+# Env
+.env
