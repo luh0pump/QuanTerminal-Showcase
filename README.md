@@ -1,92 +1,105 @@
-# QuanTerminal — Architecture Showcase
+# QuanTerminal — Engineering Showcase
 
-> Public **engineering showcase** of QuanTerminal, a quantitative research terminal.
-> This repository demonstrates the system architecture, data-integration patterns,
-> validation methodology, and CI/testing discipline of the project.
->
-> It intentionally contains **no live strategy logic, no signals, and no research
-> registers** — only the reusable engineering scaffolding. The production research
-> repository is private.
+[![CI](https://github.com/luh0pump/QuanTerminal-Showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/luh0pump/QuanTerminal-Showcase/actions)
 
----
+Public, sanitized engineering showcase for **QuanTerminal**, a private quantitative research and validation platform.
 
-## What this project is
+This repository is intentionally **not a synchronized mirror of the production codebase**. It exposes representative engineering patterns, tests and documentation while excluding live strategy logic, signals, proprietary research state, paid datasets and account/broker information.
 
-QuanTerminal is a cross-asset **quantitative research terminal** — explicitly *not* a
-trading bot. Its purpose is to systematically discover, validate, and forward-test
-statistical edges in futures / FX / macro markets under strict scientific discipline
-(point-in-time data, multiple-testing correction, out-of-sample gating).
+## What this demonstrates
 
-The core design principle: **AI as a force multiplier.** Specifications are written by
-a human architect, implemented with AI assistance, then every result is independently
-re-verified by hand. Nothing enters the research record without a reproducible,
-byte-exact anchor.
+- C#/.NET system decomposition
+- Python statistical tooling
+- adapter-based data integration
+- point-in-time data discipline
+- deterministic validation gates
+- reproducible research workflows
+- automated tests and CI
+- explicit separation between research, forward/shadow evidence and product-facing state
+- AI-assisted implementation with independent verification
 
-## System at a glance
+## Current production architecture — sanitized view
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│  Blazor SSR frontend (read-only)                             │
-├──────────────────────────────────────────────────────────────┤
-│  QuanTerminal.Core  (C# / .NET 8)                            │
-│   • IDataSource adapters (FRED/ALFRED, Databento, CFTC, ECB) │
-│   • Point-in-time pipeline (transform → align)               │
-│   • DuckDB + Parquet cache-through warehouse                 │
-├──────────────────────────────────────────────────────────────┤
-│  Python statistics sidecar                                   │
-│   • Deflation / multiple-testing gates (PSR / DSR)           │
-├──────────────────────────────────────────────────────────────┤
-│  Storage: DuckDB (local)  ·  Cloudflare R2 (raw market data) │
-└──────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    A[External data sources] --> B[Adapters / ingestion]
+    B --> C[Point-in-time transforms]
+    C --> D[Research & validation engines]
+    D --> E[Python statistical sidecar]
+    D --> F[Deterministic state / evidence contracts]
+    E --> F
+    F --> G[Forward / shadow observation]
+    G --> H[Read-only product projection]
+    H --> I[React / Vite frontend]
 ```
 
-## Engineering highlights
+The private production system has evolved materially since the first public showcase snapshot. Today the core remains C#/.NET with Python statistical tooling, while the read-only frontend is React/Vite and the operating model places much more emphasis on machine-readable state, explicit evidence contracts and reproducible review gates.
 
-- **Adapter-based data integration** — every source (macro vintages, futures, positioning)
-  implements a single `IDataSource` contract, so new providers plug in without touching
-  the pipeline. See [`src/QuanTerminal.Core/DataSources`](src/QuanTerminal.Core/DataSources).
-- **Point-in-time discipline** — transforms are applied in reference-month time *before*
-  alignment, never after. This prevents look-ahead bias structurally rather than by
-  convention. See [`docs/point-in-time.md`](docs/point-in-time.md).
-- **Validation as a first-class gate** — a Python sidecar computes deflated performance
-  hurdles; the C# side treats validation as a hard gate, not an afterthought. Concept
-  documented in [`docs/validation-methodology.md`](docs/validation-methodology.md).
-- **Reproducibility** — cache-through DuckDB/Parquet warehouse, additive-only raw storage,
-  CI that runs the full test suite on every push.
+## Engineering principles
 
-## Tech stack
+### 1. Point-in-time correctness
+Historical data is processed using only information available at the relevant observation time. Transform and alignment rules are designed to prevent look-ahead leakage structurally rather than relying on analyst discipline alone.
 
-| Layer            | Technology                                  |
-|------------------|---------------------------------------------|
-| Core terminal    | C# / .NET 8                                  |
-| Statistics       | Python 3.11 (NumPy / SciPy / pandas)         |
-| Frontend         | Blazor SSR (read-only)                       |
-| Warehouse        | DuckDB + Parquet                             |
-| Raw market data  | Cloudflare R2 (S3-compatible), rclone        |
-| CI               | GitHub Actions                               |
-| Containerisation | Docker                                       |
+See: [Point-in-time notes](docs/point-in-time.md)
 
-## Repository layout
+### 2. Validation is a gate
+Research outputs do not become trusted simply because a backtest looks good. Validation is treated as an explicit gate, including statistical checks, out-of-sample evidence and reproducibility requirements.
 
-```
-src/
-  QuanTerminal.Core/          # data sources, pipeline, abstractions
-  QuanTerminal.Validation/    # validation-gate orchestration (C# side)
-python/
-  sidecar/                    # statistics sidecar (deflation gates)
-tests/
-  QuanTerminal.Core.Tests/    # unit tests for adapters + pipeline
-docs/                         # architecture & methodology notes
+See: [Validation methodology](docs/validation-methodology.md)
+
+### 3. Evidence over claims
+Important transitions are backed by tests, reproducible artifacts and explicit state. This is especially important in long-running AI-assisted engineering workflows where implementation and independent review are deliberately separated.
+
+### 4. Public proof without exposing IP
+The public repository shows real engineering structure and tests, but deliberately omits:
+
+- strategy definitions and signals
+- private research registers
+- proprietary datasets
+- broker/account information
+- production credentials and private endpoints
+- current operational state files
+
+## Public repository structure
+
+```text
+src/                      representative C# implementation
+python/                   representative Python statistical tooling
+tests/                    automated tests
+docs/                     methodology and architecture notes
+.github/workflows/        CI
 ```
 
-## Running the tests
+## Technology
+
+| Area | Technology |
+|---|---|
+| Core engineering | C# / .NET |
+| Statistical tooling | Python |
+| Data / research storage | DuckDB / Parquet patterns |
+| Product UI in current private system | React / Vite |
+| Validation | C# + Python |
+| Delivery | Git + GitHub Actions |
+| Operating model | deterministic contracts, tests, evidence and independent review |
+
+## Run the public tests
 
 ```bash
 dotnet test
-cd python && pytest
+cd python
+pytest
 ```
+
+## Portfolio context
+
+QuanTerminal is the strongest proof of my work on larger, ambiguous engineering problems: turning research requirements into explicit interfaces, validation rules, tests and reproducible state instead of one-off scripts.
+
+For a compact Python + LLM automation example, see:
+
+- [AI Company Evaluation Pipeline](https://github.com/luh0pump/ai-company-evaluation-pipeline)
+
+More context: [Portfolio overview](docs/portfolio-overview.md)
 
 ---
 
-*Built by [@luh0pump](https://github.com/luh0pump). This showcase mirrors the
-architecture of a larger private research codebase.*
+Built by [@luh0pump](https://github.com/luh0pump).
