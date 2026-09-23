@@ -6,6 +6,28 @@ Public, sanitized engineering showcase for **QuanTerminal**, a private quantitat
 
 This repository is intentionally **not a synchronized mirror of the production codebase**. It exposes representative engineering patterns, tests and documentation while excluding live strategy logic, signals, proprietary research state, paid datasets and account/broker information.
 
+## Product UI — sanitized
+
+QuanTerminal includes a read-only product layer for inspecting portfolio state, research evidence and validation results. The screenshots below are sanitized views from the private application. Strategy identifiers and sensitive research information have been removed.
+
+### Portfolio overview
+
+![QuanTerminal portfolio overview](docs/assets/quanterminal-overview.png)
+
+Sanitized portfolio-level view combining strategy state, portfolio metrics and current research status.
+
+### Research analysis
+
+![QuanTerminal research analysis](docs/assets/quanterminal-analysis.png)
+
+Representative analysis workspace used to inspect research evidence, diagnostics and strategy-level results.
+
+### Validation workflow
+
+![QuanTerminal validation workflow](docs/assets/quanterminal-validation.png)
+
+Sanitized validation view showing how research evidence is inspected before it is accepted into product-facing state.
+
 ## What this demonstrates
 
 - C#/.NET system decomposition
